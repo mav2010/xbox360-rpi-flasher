@@ -1,8 +1,17 @@
 # xbox360-rpi-flasher
-XBox 360 NAND reader/writer for Raspberry Pi
+XBox 360 NAND reader/writer for Raspberry Pi 4
 
-Based on the great work of G33KatWork: https://github.com/G33KatWork/XBox-360-AVR-flasher
+go to main.c and comment out depending on what you want to do
 
-Unfortunately, this experiment failed, reading on Pi Zero is too unreliable for me to even start coding writing routines.
+- read NAND: dumps the NAND 3 times, check afterwards with cksum that they are identical! If yes, the connection is stable enough to attempt a write.
 
-EDIT 2020-04-18: After edits of Ancient123, this can read NAND quite consistently on RPi 4
+- write NAND: writes to NAND from the provided file and dumps the NAND again. Compare input and dump file with cksum to confirm that they are identical. If yes, then your flash was successful. When flashing less than 16MB (the full 0x400 blocks), make sure to adjust the blocks variable in nand_to_file() accordingly. E.g. if you flash glitch.ecc, set the blocks to 0x050. Otherwise the dump will be too large and obviously the checksums will not match. This only affects the read procedure, for write the program automatically sets the right size depending on the file size.
+
+Wiring Instructions for Pi 4, following the color coding from the Weekendmodder (https://weekendmodder.com/picoflasher):
+Blue: GPIO23
+Green: GPIO24
+Black: MOSI (GPIO 10)
+Orange: MISO (GPIO 9)
+Red: SCLK (GPIO 11)
+Brown: GPIO 26
+Yellow: Ground
